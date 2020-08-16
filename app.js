@@ -1,13 +1,14 @@
-import createError from 'http-errors';
-import express from 'express';
-import fileUpload from 'express-fileupload';
-import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
-import logger from 'morgan';
-import indexRouter from './routes/download-upload-manager';
-import cast from './routes/cast';
+const createError = require('http-errors');
+const express = require('express');
+const fileUpload = require('express-fileupload');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const logger = require('morgan');
+const HttpStatus = require('http-status-codes');
+const indexRouter = require('./routes/download-upload-manager');
+const cast = require('./routes/cast');
 
-let app = express();
+const app = express();
 
 app.use(fileUpload({
   createParentPath: true
@@ -41,5 +42,23 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.send('error');
 });
+
+app.use(function(req, res, next) {
+  const send = res.send;
+
+  res.send = function(obj) {
+    if (Array.isArray(obj) && !obj.length) {
+      this.status(HttpStatus.NO_CONTENT);
+    }
+    if (obj === null || obj === undefined) {
+      this.status(HttpStatus.NOT_FOUND);
+    }
+
+    send.call(this, obj);
+  };
+
+  next();
+});
+
 
 module.exports = app;

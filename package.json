@@ -13,6 +13,7 @@
     "express": "~4.16.1",
     "express-fileupload": "1.1.9",
     "http-errors": "~1.6.3",
+    "http-status-codes": "^1.4.0",
     "morgan": "~1.9.1",
     "srt2vtt": "^1.3.1"
   },

@@ -31,8 +31,17 @@ class DeviceManager {
         return this.device.getInstance().deviceApi;
     }
 
-    getStatus() {
-        return this.device.getInstance().status;
+    getStatus(res) {
+        // TODO : https://github.com/alxhotel/chromecast-api/commit/9112650f9e26686204d65ae329f8343639f79417
+        // this.device.getInstance().deviceApi.getStatus((status) => {
+        //     if (status) {
+        //         console.log(status);
+        //         res.send(status);
+        //     } else {
+        //         console.log(status);
+        //         res.end();
+        //     }
+        // });
     }
 
     requestPlayOnCast(media, res, startTime = 0) {
