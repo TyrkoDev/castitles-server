@@ -5,7 +5,7 @@ const router = express.Router();
 const deviceManager = new DeviceManager();
 
 router.get('/device', function(req, res, next) {
-    res.send(deviceManager.device);
+    res.send({ deviceName: deviceManager.device.getInstance().deviceApi.friendlyName });
 });
 
 router.get('/devices', function(req, res, next) {
@@ -17,7 +17,10 @@ router.post('/choose-device', function(req, res, next) {
 });
 
 router.get('/health-check-device', function(req, res, next) {
-    res.send(deviceManager.getStatus());
+    // res.send({ health: deviceManager.getStatus() });
+    // deviceManager.getStatus(res);
+    //TODO
+    res.end();
 });
 
 router.post('/launch-media', function(req, res, next) {
@@ -51,6 +54,11 @@ router.post('/go-to/:time', function(req, res, next) {
     deviceManager.api().seekTo(req.params.time, err =>
         err ? res.send({ error: 'Failed to got to time [' + req.params.time + '] on media. Device : [' + deviceManager.api().friendlyName + ']' }) : res.end()
     );
+});
+
+router.get('/current-time', function(req, res, next) {
+    // deviceManager.api().getCurrentTime()
+    // res.send({ health: deviceManager.getStatus() });
 });
 
 module.exports = router;
