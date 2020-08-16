@@ -1,13 +1,13 @@
-const createError = require('http-errors');
-const express = require('express');
-const fileUpload = require('express-fileupload');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const logger = require('morgan');
-const indexRouter = require('./routes/download-upload-manager');
-const cast = require('./routes/cast');
+import createError from 'http-errors';
+import express from 'express';
+import fileUpload from 'express-fileupload';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import logger from 'morgan';
+import indexRouter from './routes/download-upload-manager';
+import cast from './routes/cast';
 
-var app = express();
+let app = express();
 
 app.use(fileUpload({
   createParentPath: true

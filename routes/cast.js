@@ -1,111 +1,56 @@
-const express = require('express');
+import express from 'express';
+import DeviceManager from '../src/core/device-manager';
+
 const router = express.Router();
-const ChromecastAPI = require('chromecast-api');
-const client = new ChromecastAPI();
-const path = require('path');
-
-let devices = [];
-let device;
-let ip, ifaces = require('os').networkInterfaces();
-for (let dev in ifaces) {
-    ifaces[dev].filter((details) => details.family === 'IPv4' && details.internal === false ? ip = details.address: undefined);
-}
-
-client.on('device', function (d) {
-  devices.push(d);
-});
+const deviceManager = new DeviceManager();
 
 router.get('/device', function(req, res, next) {
-    res.send(device);
+    res.send(deviceManager.device);
 });
 
 router.get('/devices', function(req, res, next) {
-    res.send(devices.map(d => d.friendlyName));
+    res.send(deviceManager.devices.map(d => d.friendlyName));
 });
 
 router.post('/choose-device', function(req, res, next) {
-    device = devices.find(d => d.friendlyName === req.body.device);
-    res.send(device);
+    res.send(deviceManager.chooseDevice(req.body.device));
+});
+
+router.get('/health-check-device', function(req, res, next) {
+    res.send(deviceManager.getStatus());
 });
 
 router.post('/launch-media', function(req, res, next) {
-    const mediaURL = 'http://' + ip + ':3000/file-manager/file/' + req.body.video;
-
-    device.play(mediaURL, err => {
-        if (!err) {
-            res.end(); 
-        }
-        else {
-            res.send({ error: 'Failed to launch media on device : ' + device.friendlyName });            
-        }
-    });
+    deviceManager.play(req.body.video, res);
 });
 
 router.post('/launch-media-with-subtitles', function(req, res, next) {
     const { subtitles, startTime, video } = req.body;
-
-    const media = {
-        url: 'http://' + ip + ':3000/file-manager/file/' + video,
-        subtitles: [{
-            language: 'en-US',
-            url: 'http://' + ip + ':3000/file-manager/file/' + subtitles + '.vtt',
-            name: 'English'
-        }]
-    };
-
-    device.play(media, { startTime }, err =>  {
-        if (!err) {
-            res.end(); 
-        }
-        else {
-            res.send({ error: 'Failed to launch media on device : ' + device.friendlyName });            
-        }
-    });
+    deviceManager.playWithSubtitles(subtitles, startTime, video, res);
 });
 
 router.post('/play', function(req, res, next) {
-    device.resume(err =>  {
-        if (!err) {
-            res.end(); 
-        }
-        else {
-            res.send({ error: 'Failed to resume media on device : ' + device.friendlyName });            
-        }
-    });
+    deviceManager.api().resume(err =>
+        err ? res.send({ error: 'Failed to resume media on device : ' + deviceManager.api().friendlyName }) : res.end()
+    );
 });
 
 router.post('/pause', function(req, res, next) {
-    device.pause(err =>  {
-        if (!err) {
-            res.end(); 
-        }
-        else {
-            res.send({ error: 'Failed to pause media on device : ' + device.friendlyName });            
-        }
-    });
+    deviceManager.api().pause(err =>
+        err ? res.send({ error: 'Failed to pause media on device : ' + deviceManager.api().friendlyName }) : res.end()
+    );
 });
 
 router.post('/stop', function(req, res, next) {
-    device.stop(err =>  {
-        if (!err) {
-            res.end(); 
-        }
-        else {
-            res.send({ error: 'Failed to stop media on device : ' + device.friendlyName });            
-        }
-    });
+    deviceManager.api().stop(err =>
+        err ? res.send({ error: 'Failed to stop media on device : ' + deviceManager.api().friendlyName }) : res.end()
+    );
 });
 
 router.post('/go-to/:time', function(req, res, next) {
-    device.seekTo(req.params.time, err =>  {
-        if (!err) {
-            res.end(); 
-        }
-        else {
-            res.send({ error: 'Failed to got to time [' + time + '] on media. Device : [' + device.friendlyName + ']' });            
-        }
-    });
+    deviceManager.api().seekTo(req.params.time, err =>
+        err ? res.send({ error: 'Failed to got to time [' + req.params.time + '] on media. Device : [' + deviceManager.api().friendlyName + ']' }) : res.end()
+    );
 });
 
 module.exports = router;
-  

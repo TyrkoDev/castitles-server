@@ -22,13 +22,13 @@ router.post('/', function(req, res, next) {
         }
         fs.writeFileSync(pathToFiles + path.basename(file.name, path.extname(file.name)) + '.vtt', vttData);
         
-        for (const f of files) {
-          if ((path.extname(f) === path.extname(file.name) && f !== file.name) || path.extname(file.name) === '.srt') {
-            fs.unlink(path.join(pathToFiles, f), err => {
-              if (err) throw err;
-            });
-          }
-        }
+        // for (const f of files) {
+        //   if ((path.extname(f) === path.extname(file.name) && f !== file.name) || path.extname(file.name) === '.srt') {
+        //     fs.unlink(path.join(pathToFiles, f), err => {
+        //       if (err) throw err;
+        //     });
+        //   }
+        // }
         res.end();
       });
     } else {
