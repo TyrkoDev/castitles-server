@@ -1,4 +1,4 @@
-import DeviceApi from 'chromecast-api/lib/device';
+const DeviceApi = require('chromecast-api/lib/device');
 
 class Device {
     constructor () {

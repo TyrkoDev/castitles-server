@@ -7,7 +7,7 @@ const logger = require('morgan');
 const indexRouter = require('./routes/download-upload-manager');
 const cast = require('./routes/cast');
 
-var app = express();
+const app = express();
 
 app.use(fileUpload({
   createParentPath: true

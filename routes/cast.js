@@ -1,5 +1,5 @@
-import express from 'express';
-import DeviceManager from '../src/core/device-manager';
+const express = require('express');
+const DeviceManager = require('../src/core/device-manager');
 
 const router = express.Router();
 const deviceManager = new DeviceManager();
